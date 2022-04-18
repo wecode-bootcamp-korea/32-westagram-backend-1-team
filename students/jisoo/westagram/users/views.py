@@ -1,8 +1,9 @@
 
 import json, re
 
-from django.views import View
-from django.http  import JsonResponse
+from django.views     import View
+from django.http      import JsonResponse
+from django.db.models import Q
 
 from users.models import User
 
@@ -47,10 +48,7 @@ class LoginView(View):
             email    = data['email'],
             password = data['password'],
 
-            if User.objects.filter(email = email).exists():
-                return JsonResponse({'message':'INVALID_USER'}, status=401)
-
-            if User.objects.filter(password = password).exists():
+            if User.objects.filter(Q(email = email) & Q(password = password)).exists():
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
 
             return JsonResponse({'message':'SUCCESS'}, status=200)
