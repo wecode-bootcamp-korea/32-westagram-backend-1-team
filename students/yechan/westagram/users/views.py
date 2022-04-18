@@ -1,27 +1,34 @@
-import json
-from nis import match
 
-from django.http import JsonResponse
+from django.shortcuts import render
+import json, re
+
+from django.http import JsonResponse, HttpResponse
 from django.views import View
-
 from users.models import User
+# from users.validation import Validate
 
 class SignUpView(View):
     def post(self, request):
         try:
-            data = json.loads(request.body)
-                # email_regex  = '^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$'
-                # passwd_regex = '^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$'
+            data           = json.loads(request.body)
+            email          = data['email']
+            password       = data['password']
+            username       = data['username']
+            phonenumber    = data['phonenumber']
+            regex_email    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9-.]+$'
+            regex_password = "^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$"
+
             if User.objects.filter(email=data['email']).exists():
                 return JsonResponse({'message':'email_already_exists'}, status=400)
-            # if not re.match(email_regex, data['email']):
-            #     return JsonResponse({'message':'invalid_email'}, status=400)
-            # if not re.match(passwd_regex, data['email']):
-            #     return JsonResponse({'message':'invalid_password'}, status=400)
-            User.objects.create(username    = data['username'],
-                                email       = data['email'],
-                                password    = data['password'],
-                                phonenumber = data['phonenumber']
+            if not re.match(regex_email, email):
+                return JsonResponse({'message' : 'INVALID_EMAIL'}, status=400)
+            if not re.match(regex_password, password):
+                return JsonResponse({'message' : 'INVALID_PASSWORD'}, status=400)
+
+            User.objects.create(username    = username,
+                                email       = email,
+                                password    = password,
+                                phonenumber = phonenumber
                                 )
             return JsonResponse({'message':'SUCCESS'},status=201)
         except ValueError:
