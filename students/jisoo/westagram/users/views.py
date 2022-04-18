@@ -19,7 +19,7 @@ class SignupView(View):
 
             if not re.match(EMAIL_REGEX, data['email']):
                 return JsonResponse({'message' : 'INVALID_EMAIL'}, status = 400)
-                
+            
             if not re.match(PASSWORD_REGEX, data['password']):
                 return JsonResponse({'message' : 'INVALID_PASSWORD'}, status = 400)
             
@@ -48,7 +48,7 @@ class LoginView(View):
             password = data['password'],
 
             if User.objects.filter(email = email).exists():
-                    return JsonResponse({'message':'INVALID_USER'}, status=401)
+                return JsonResponse({'message':'INVALID_USER'}, status=401)
 
             if User.objects.filter(password = password).exists():
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
