@@ -21,12 +21,12 @@ class SignUpView(View):
             if not re.match(r"^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", data["email"]):
                 return JsonResponse({'message': 'INVALID_EMAIL'}, status=400) 
 
-            if User.objects.filter(email = email).exists():
-                return JsonResponse({'message' : 'Email_Already_Exists'}, status=400)
-
             if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$", data["password"]):
                 return JsonResponse({'message': 'INVALID_PASSWORD'}, status=400)
-
+         
+            if User.objects.filter(email = email).exists():
+                return JsonResponse({'message' : 'Email_Already_Exists'}, status=400)
+            
             User.objects.create(
                 username   = username,
                 first_name = first_name,
