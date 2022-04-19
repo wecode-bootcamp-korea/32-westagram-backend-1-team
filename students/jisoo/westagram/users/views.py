@@ -1,4 +1,5 @@
 
+import email
 import json, re
 
 from django.views     import View
@@ -12,8 +13,8 @@ class SignupView(View):
         try:
             data = json.loads(request.body)
             
-            email    = data['email'],
-            password = data['password'],
+            email    = data['email']
+            password = data['password']
 
             EMAIL_REGEX    = '[a-zA-Z0-9.-_+]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.]+'
             PASSWORD_REGEX = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
@@ -33,7 +34,7 @@ class SignupView(View):
                 last_name    = data['last_name'],
                 email        = data['email'],
                 password     = data['password'],
-                phone_number = data['phone_number'],
+                phone_number = data['phone_number']
             )
 
             return JsonResponse({'message':'SUCCESS'}, status=201)
@@ -47,8 +48,8 @@ class LoginView(View):
 
             email    = data['email'],
             password = data['password'],
-
-            if User.objects.filter(Q(email = email) & Q(password = password)).exists():
+            # print(User.objects.filter(Q(email=data['email']) & Q(password = "password1!")).exists())
+            if not User.objects.filter(Q(email = data['email']) & Q(password = data['password'])).exists():
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
 
             return JsonResponse({'message':'SUCCESS'}, status=200)
