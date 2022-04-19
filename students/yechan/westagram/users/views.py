@@ -1,7 +1,7 @@
 import email
 import json, re
 
-from django.http  import JsonResponse, HttpResponse
+from django.http  import JsonResponse
 from django.views import View
 
 from users.models import User
@@ -47,4 +47,4 @@ class SingInView(View):
                  return JsonResponse({'message':'INVALID_USER'},status=401)
 
         except KeyError:
-            return JsonResponse({'message':'KEY_ERROR'},status=401)
+            return JsonResponse({'message':'KEY_ERROR'},status=400)
