@@ -6,7 +6,7 @@ from django.views     import View
 from django.http      import JsonResponse
 from django.db.models import Q
 
-from users.models import User
+from users.models     import User
 
 class SignupView(View):
     def post(self, request):
@@ -14,7 +14,7 @@ class SignupView(View):
             data = json.loads(request.body)
             
             email           = data['email']
-            hashed_password = bcrypt.hashpw(['password'].encode('utf-8'), bcrypt.gensalt())
+            hashed_password = bcrypt.hashpw((data['password']).encode('utf-8'), bcrypt.gensalt())
 
             EMAIL_REGEX    = '[a-zA-Z0-9.-_+]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.]+'
             PASSWORD_REGEX = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
@@ -33,7 +33,7 @@ class SignupView(View):
                 first_name   = data['first_name'],
                 last_name    = data['last_name'],
                 email        = data['email'],
-                password     = data['hashed_password'],
+                password     = hashed_password,
                 phone_number = data['phone_number']
             )
 
