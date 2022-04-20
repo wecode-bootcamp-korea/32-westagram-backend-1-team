@@ -3,7 +3,7 @@ import json, re
 from django.http  import JsonResponse
 from django.views import View
 
-import bcrypt, jwt
+import bcrypt
 from users.models import User
 
 class SignUpView(View):
@@ -42,7 +42,6 @@ class SingInView(View):
             password = data['password']
 
             if User.objects.filter(email=email,password=password).exists():
-
                 return JsonResponse({'message':'SUCCESS'},status=201)
             else:
                  return JsonResponse({'message':'INVALID_USER'},status=401)
