@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'corsheaders',
     'users',
-    'bcrypt',
     'django.contrib.staticfiles',
 ]
 
