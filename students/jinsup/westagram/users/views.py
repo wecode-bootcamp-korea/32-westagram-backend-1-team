@@ -1,5 +1,4 @@
-from email.message import EmailMessage
-import json, re # 파이썬 built-in package
+import json, re, bcrypt # 파이썬 built-in package
 
 from django.http import JsonResponse # third-party package
 from django.views import View
@@ -28,12 +27,15 @@ class SignUpView(View):
             if User.objects.filter(email = email).exists():
                 return JsonResponse({'message' : 'Email_Already_Exists'}, status=400)
 
+            hashed_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
+            decoded_password = hashed_password.decode('utf-8')
+
             User.objects.create(
                 username   = username,
                 first_name = first_name,
                 last_name  = last_name,
                 email      = email,
-                password   = password,
+                password   = decoded_password,
                 number     = number,
             )
             return JsonResponse({'message':'created'}, status = 201)
@@ -48,7 +50,7 @@ class SignInView(View):
             password = data['password']
 
             if not User.objects.filter(email = email, password = password).exists():
-                return JsonResponse({'message':'INVALID_USER'}, status = 401)            
+                return JsonResponse({'message':'INVALID_USER'}, status = 401)          
             return JsonResponse({'message':'SUCCESS'}, status = 200)
 
         except KeyError :
