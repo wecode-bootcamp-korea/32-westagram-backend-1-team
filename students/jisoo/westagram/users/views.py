@@ -15,7 +15,9 @@ class SignupView(View):
             
             email            = data['email']
             hashed_password  = bcrypt.hashpw((data['password']).encode('utf-8'), bcrypt.gensalt())
-            decoded_password = hashed_password.decode('utf=8')
+            decoded_password = hashed_password.decode('utf-8')
+
+            
 
             EMAIL_REGEX    = '[a-zA-Z0-9.-_+]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.]+'
             PASSWORD_REGEX = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
