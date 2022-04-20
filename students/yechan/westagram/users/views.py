@@ -1,9 +1,7 @@
-import json, re
+import json, re, bcrypt
 
 from django.http  import JsonResponse
 from django.views import View
-
-import bcrypt
 from users.models import User
 
 class SignUpView(View):
