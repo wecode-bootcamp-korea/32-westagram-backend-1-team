@@ -1,20 +1,19 @@
 
-import email
-import json, re
+import json, re, bcrypt, jwt
 
 from django.views     import View
 from django.http      import JsonResponse
 from django.db.models import Q
 
-from users.models import User
+from users.models     import User  
 
 class SignupView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
             
-            email    = data['email']
-            password = data['password']
+            email            = data['email']
+            hashed_password  = bcrypt.hashpw((data['password']).encode('utf-8'), bcrypt.gensalt())
 
             EMAIL_REGEX    = '[a-zA-Z0-9.-_+]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.]+'
             PASSWORD_REGEX = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
@@ -33,7 +32,7 @@ class SignupView(View):
                 first_name   = data['first_name'],
                 last_name    = data['last_name'],
                 email        = data['email'],
-                password     = data['password'],
+                password     = hashed_password.decode('utf-8)'),
                 phone_number = data['phone_number']
             )
 
@@ -46,12 +45,15 @@ class LoginView(View):
         try:
             data = json.loads(request.body)
 
-            email    = data['email']
-            password = data['password']
-            
+            email            = data['email']
+            password         = data['password']
+
             if not User.objects.filter(Q(email = email) & Q(password = password)).exists():
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
 
+            if not User.objects.filter(password):
+                return JsonResponse({'message': "INVALID_PASSWORD"}, status=401)
+            
             return JsonResponse({'message':'SUCCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
