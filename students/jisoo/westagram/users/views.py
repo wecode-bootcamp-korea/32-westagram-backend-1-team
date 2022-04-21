@@ -12,7 +12,8 @@ class SignupView(View):
         try:
             data = json.loads(request.body)
             
-            email = data['email']
+            email           = data['email']
+            hashed_password = bcrypt.hashpw((data['password']).encode('utf-8'), bcrypt.gensalt())
 
             EMAIL_REGEX    = '[a-zA-Z0-9.-_+]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.]+'
             PASSWORD_REGEX = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
@@ -33,7 +34,7 @@ class SignupView(View):
                 first_name   = data['first_name'],
                 last_name    = data['last_name'],
                 email        = data['email'],
-                password     = hashed_password,
+                password     = hashed_password.decode('utf-8)'),
                 phone_number = data['phone_number']
             )
 
@@ -58,5 +59,9 @@ class LoginView(View):
         except User.DoesNotExist:
             return JsonResponse({"MESSAGE": "INVALID_USER"}, status=404)
 
+            if not User.objects.filter(password):
+                return JsonResponse({'message': "INVALID_PASSWORD"}, status=401)
+            
+            return JsonResponse({'message':'SUCCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
